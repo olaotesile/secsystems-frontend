@@ -3,6 +3,8 @@ const BASE_URL =
     ? import.meta.env.VITE_BACKEND_URL
     : import.meta.env.VITE_DEV_BACKEND;
 
+console.log("BASE_URL:", BASE_URL); 
+
 export async function getBanks(query) {
   if (!query) return [];
 
