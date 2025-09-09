@@ -10,12 +10,11 @@ export async function getBanks(query) {
     const res = await fetch(`${BASE_URL}/banks?query=${query}`);
     const json = await res.json();
 
-    if (!json.success) return [];
-
-    return json.data.map((bank) => ({
+    // json is already the array of banks
+    return json.map((bank) => ({
       name: bank.bankName,
-      shortcode: bank.shortcode,
-      logo: bank.logoUrl,
+      shortcode: bank.code, // backend uses 'code', not 'shortcode'
+      logo: bank.logo || "", // optional if you don't have logos
     }));
   } catch (err) {
     console.error("Error fetching banks:", err);
