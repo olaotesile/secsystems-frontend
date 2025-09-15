@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SearchInput from "../components/SearchInput";
 import BankDropdown from "../components/BankDropdown";
 import BankCard from "../components/BankCard";
@@ -9,18 +9,25 @@ export default function BankSearch() {
   const [results, setResults] = useState([]);
   const [selectedBank, setSelectedBank] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [hasSearched, setHasSearched] = useState(false);
 
-  const fetchBanks = async (text) => {
-    if (!text) {
+  // Fetch from backend whenever query changes (debounced)
+  useEffect(() => {
+    if (!query) {
       setResults([]);
-      setHasSearched(false);
       return;
     }
 
+    const timeout = setTimeout(() => {
+      fetchBanks(query);
+    }, 300); // wait 300ms after user stops typing
+
+    return () => clearTimeout(timeout);
+  }, [query]);
+
+  const fetchBanks = async (text) => {
     setLoading(true);
     try {
-      const data = await getBanks(text);
+      const data = await getBanks(text); // backend should return only banks that match
       setResults(data);
     } catch (err) {
       console.error("Error fetching banks:", err);
@@ -30,25 +37,14 @@ export default function BankSearch() {
     }
   };
 
-  const handleSearchClick = () => {
-    setHasSearched(true); 
-    setSelectedBank(null); 
-    fetchBanks(query); 
-  };
-
-  const handleChange = (text) => {
-    setQuery(text);
-    setHasSearched(false); 
-  };
-
   return (
     <div className="relative w-full max-w-md mx-auto mt-8">
       <SearchInput
         value={query}
-        onChange={handleChange}
-        onSearch={handleSearchClick}
+        onChange={setQuery}
+        onSearch={() => fetchBanks(query)} // still works if user clicks
       />
-      {hasSearched && (
+      {query && (
         <BankDropdown
           results={results}
           onSelect={setSelectedBank}
