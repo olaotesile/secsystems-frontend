@@ -10,7 +10,7 @@ export default function BankSearch() {
   const [selectedBank, setSelectedBank] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Fetch from backend whenever query changes (debounced)
+  
   useEffect(() => {
     if (!query) {
       setResults([]);
@@ -19,7 +19,7 @@ export default function BankSearch() {
 
     const timeout = setTimeout(() => {
       fetchBanks(query);
-    }, 300); // wait 300ms after user stops typing
+    }, 300); 
 
     return () => clearTimeout(timeout);
   }, [query]);
@@ -27,7 +27,7 @@ export default function BankSearch() {
   const fetchBanks = async (text) => {
     setLoading(true);
     try {
-      const data = await getBanks(text); // backend should return only banks that match
+      const data = await getBanks(text); 
       setResults(data);
     } catch (err) {
       console.error("Error fetching banks:", err);
@@ -42,7 +42,7 @@ export default function BankSearch() {
       <SearchInput
         value={query}
         onChange={setQuery}
-        onSearch={() => fetchBanks(query)} // still works if user clicks
+        onSearch={() => fetchBanks(query)} 
       />
       {query && (
         <BankDropdown
